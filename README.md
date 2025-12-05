@@ -114,3 +114,7 @@ This project shows the automated deployment of a simple web application connecte
    * Ensure both application and database containers are running.
 
 ---
+
+## Screenshot from web-app
+<img width="2880" height="1620" alt="image" src="https://github.com/user-attachments/assets/24195491-d3d5-4dbc-be89-bcab5354c084" />
+
