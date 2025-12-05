@@ -33,6 +33,31 @@ This project shows the automated deployment of a simple web application connecte
 
 ---
 
+## 📂 Simplified structure of project
+
+```
+.
+├──ansible/
+│    ├── inventory.ini
+│    ├── playbook.yml
+│    └── roles/
+│        ├── db/               # Database setup
+│        ├── docker/           # Docker installation & configuration
+│        └── web/              # Web app deployment
+│
+├──app/
+│    ├── backend/             # Flask app source code & Dockerfile
+│    │   ├── dependencies.txt
+│    │   └── main.py
+│    ├── compose.yaml          # Docker Compose definition
+│    └── proxy/                # Nginx reverse proxy
+│        └── Dockerfile
+│
+└──README.md
+```
+
+---
+
 ## Setup & Deployment Instructions
 
 1. **Clone the Repository**
