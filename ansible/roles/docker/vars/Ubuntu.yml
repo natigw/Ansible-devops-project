@@ -1,0 +1,6 @@
+---
+# This file is loaded automatically for Ubuntu systems.
+# We use the dynamic variable 'ansible_distribution_release' 
+# so it works on ANY Ubuntu version (Jammy, Focal, Noble, etc).
+
+docker_apt_suite: "{{ ansible_distribution_release }}"

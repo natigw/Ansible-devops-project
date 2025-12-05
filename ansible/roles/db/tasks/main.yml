@@ -1,0 +1,22 @@
+---
+- name: "Create docker network"
+  community.docker.docker_network:
+    name: app_backend  
+    
+- name: Load encrypted vars
+  include_vars:
+    file: ../vars/secret.yml
+
+- name: "Run MySQL container"
+  community.docker.docker_container:
+    name: db
+    image: mysql:8.0
+    state: started
+    restart_policy: unless-stopped
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
+      MYSQL_DATABASE: "{{ DB_NAME }}"
+    networks:
+      - name: app_backend
+    volumes:
+      - mysql_data:/var/lib/mysql

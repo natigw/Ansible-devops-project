@@ -1,0 +1,72 @@
+---
+- name: Ensure conflicting services are stopped
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+  loop:
+    - nginx
+    - apache2
+  ignore_errors: true
+
+- name: Copy application source code to web server
+  ansible.builtin.copy:
+    src: ../../../app/
+    dest: /opt/app/
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Load database password from secret vars
+  include_vars:
+    file: ../vars/secret.yml
+
+- name: Load registry credentials from secret vars
+  include_vars:
+    file: ../vars/registry_creds.yml
+
+- name: Ensure database config directory exists
+  ansible.builtin.file:
+    path: /opt/app/db
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Write database password to destination file 
+  ansible.builtin.template:
+      src: db.j2
+      dest: /opt/app/db/password.txt
+      owner: root
+      group: root
+      mode: '0600'
+
+- name: Log in to Docker Hub
+  community.docker.docker_login:
+    username: "{{ docker_hub_username }}"
+    password: "{{ docker_hub_password }}"
+    reauthorize: yes # Re-authenticate even if already logged in
+
+- name: Tear down existing services
+  community.docker.docker_compose_v2:
+    project_src: /opt/app/
+    state: absent
+  ignore_errors: true
+
+- name: Create external frontend network
+  community.docker.docker_network:
+    name: app_frontend
+
+- name: Create and start services
+  community.docker.docker_compose_v2:
+    project_src: /opt/app/
+    build: always
+    recreate: always
+
+- name: Tag and push to docker hub
+  community.docker.docker_image:
+    name: natigue/backend
+    tag: latest
+    repository: natigue/backend
+    push: true
+    source: local

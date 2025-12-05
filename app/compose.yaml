@@ -1,0 +1,35 @@
+services:
+
+  backend:
+    build:
+      context: backend
+      target: builder
+    image: natigue/backend
+    restart: always
+    secrets:
+      - db-password
+    networks:
+      - backend
+      - frontend
+
+  proxy:
+    build: proxy
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - backend
+    networks:
+      - frontend
+
+secrets:
+  db-password:
+    file: db/password.txt
+
+networks:
+  backend:
+    external: true
+    name: app_backend
+  frontend:
+    external: true
+    name: app_frontend
